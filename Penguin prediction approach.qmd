@@ -1,0 +1,23 @@
+---
+title: "Penguin prediction approach"
+format: html
+editor: visual
+---
+
+## Introduction 
+This assignments approach consists of me analyzing the penguin_predictions.csv dataset. The goal is to evaluate what the model will do when we make changes to the decision threshold changing the gender of the penguin.
+
+## Approach
+
+I will be manually re-calculating the categories using three different thresholds 0.2, 0.5 and 0.8 using the confusion matrix. I can also use the dplyr package to manipulate the data.
+I expect the data to have some missing values and an imbalance in the sexes which will mess with the accuracy of some of the metrics.I will have to use the F1-score to come up with the true balance. 
+
+## AI Transcript
+Deliverable 1: The Approach (Thursday)
+What we discussed: You need to write a plan.
+
+The "Why": Establishing a Null Error Rate gives you a baseline. If you don't know the "dumb" guess accuracy, you can't prove your model is "smart."
+
+Challenges: Anticipating Class Imbalance and ensuring Reproducibility by using a URL to load data.
+
+Author: Google. (2026). Gemini (Feb 5 version) [Large language model]. https://gemini.google.com/
