@@ -101,29 +101,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>I was able to survery five people with six movies I choice. I successfully stored the data in a SQL and bring it over to R to analyze it.</p>
+<p>I was able to survery five people with six movies I choice. I successfully stored the data in a SQL and bring it over to R to analyze it. https://github.com/CiaraBonn12/Data607–Second-Week-Assignments</p>
+</section>
+<section id="database-connection" class="level2">
+<h2 class="anchored" data-anchor-id="database-connection">Database Connection</h2>
+<p>I used the RPostgres to connect to my local server to bring the data to R studio.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RPostgres)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>db_password <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PWD"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">dbname =</span> <span class="st">'movie_survey'</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">host =</span> <span class="st">'localhost'</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">port =</span> <span class="dv">5432</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">user =</span> <span class="st">'postgres'</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">password =</span> db_password)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">"SELECT r.name, m.title, rt.rating</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="st">          FROM ratings rt</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="st">          JOIN reviewers r ON rt.reviewer_id = r.reviewer_id</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="st">          JOIN movies m ON rt.movie_id = m.movie_id;"</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(con, query)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>db_password <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PWD"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">dbname =</span> <span class="st">'movie_survey'</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">host =</span> <span class="st">'localhost'</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">port =</span> <span class="dv">5432</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">user =</span> <span class="st">'postgres'</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                 <span class="at">password =</span> db_password)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">"SELECT r.name, m.title, rt.rating</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="st">          FROM ratings rt</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="st">          JOIN reviewers r ON rt.reviewer_id = r.reviewer_id</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="st">          JOIN movies m ON rt.movie_id = m.movie_id;"</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Disconnect as soon as the data is in R</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(con, query)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Disconnect as soon as the data is in R</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -151,7 +157,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 20     Ci       Minecraft      3</code></pre>
 </div>
 </div>
-<p>I handle the missing data problem by not adding it to just focus on the completed reviews.</p>
+</section>
+<section id="challenges" class="level2">
+<h2 class="anchored" data-anchor-id="challenges">Challenges</h2>
+<p>Missing values can mess up the rating because there are some people who did not watch certian movies.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -212,12 +221,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>After analyzing the data the surveyed group clearly had a preference for the movies with higher production visibility, with Sinners having the highest rating. I handle the missing data problem by not adding it to just focus on the completed reviews. I used the Inner Join strategy for the data acquisition phase. I could also extend this work by using Z-scores because I know that some of my reviewers have reviewers bias.</p>
+</section>
 <section id="methods" class="level2">
 <h2 class="anchored" data-anchor-id="methods">Methods</h2>
-<p>tep 1: Data Collection &amp; Normalization I collected ratings for 6 movies from 5 different participants. To ensure data integrity, I designed a relational schema with three normalized tables: movies, reviewers, and ratings. This many-to-many relationship is handled by the ratings table acting as a junction table.</p>
+<p>Step 1: Data Collection &amp; Normalization I collected ratings for 6 movies from 5 different participants. To ensure data integrity, I designed a relational schema with three normalized tables: movies, reviewers, and ratings. This many-to-many relationship is handled by the ratings table acting as a junction table.</p>
 <p>Step 2: Database Implementation I used PostgreSQL to create the schema and populate the records. This allowed for the use of Primary and Foreign Keys to enforce referential integrity.</p>
 <p>Step 3: R Integration &amp; Security Data was pulled into R using the DBI and RPostgres libraries. To adhere to security best practices, I utilized environment variables to mask database credentials, ensuring no passwords were hard-coded in the source file.</p>
-<p>Step 4: Analysis &amp; Missing Data Using dplyr, I calculated average ratings. My strategy for missing data was to utilize an Inner Join during the SQL query phase to focus exclusively on completed reviews, ensuring the final dataframe was tidy and ready for summary statistics.</p>
+<p>Step 4: Analysis &amp; Missing Data Using dplyr, I calculated average ratings. My strategy for missing data was to utilize an Inner Join during the SQL query phase to focus exclusively on completed reviews, ensuring the final dataframe was tidy and ready for summary statistics.To address the challenge of missing survey responses, I collaborated with an AI (Gemini) to refine my SQL INNER JOIN logic. This ensured that the resulting R dataframe only contained complete records, effectively handling missing data through listwise deletion before the analysis began.</p>
+<p>I utilized an LLM (Gemini) to assist with troubleshooting the database connection security (specifically using Sys.getenv) and to help structure the narrative sections of this report to meet all rubric requirements</p>
 <ol start="2" type="1">
 <li>Citing Tools and Sources In Data Science, we cite the packages and software used. You can add a “References” section at the very bottom of your Quarto document.</li>
 </ol>
@@ -225,6 +239,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Wickham, H., et al.&nbsp;(2023). dplyr: A Grammar of Data Manipulation. R package version 1.1.4. https://dplyr.tidyverse.org/</p>
 <p>Ooms, J., et al.&nbsp;(2024). RPostgres: C++ Interface to PostgreSQL. R package version 1.4.6. https://rpostgres.r-dbi.org/</p>
 <p>Allaire, J.J., et al.&nbsp;(2026). Quarto: An open-source scientific and technical publishing system. https://quarto.org/</p>
+<p>AI Disclosure and Citation</p>
+<p>Tool: Gemini (Google)</p>
+<p>Usage: This AI was used as a technical collaborator to assist with SQL query optimization, troubleshooting R database connection security (Sys.getenv), and structuring the project narrative to align with grading rubrics.</p>
+<p>Verification: All code generated or suggested by the AI was manually tested, verified, and modified to fit the specific local database environment and survey results.</p>
 </section>
 
 </main>
