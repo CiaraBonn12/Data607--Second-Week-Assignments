@@ -1,0 +1,90 @@
+---
+title: "Penguin Prediction Code"
+format: html
+editor: visual
+---
+## Introduction
+
+This assignments approach consists of me analyzing the penguin_predictions.csv dataset. The goal is to evaluate what the model will do when we make changes to the decision threshold changing the gender of the penguin.
+
+## Approach
+
+I will be manually re-calculating the categories using three different thresholds 0.2, 0.5 and 0.8 using the confusion matrix. I can also use the dplyr package to manipulate the data. I expect the data to have some missing values and an imbalance in the sexes which will mess with the accuracy of some of the metrics.I will have to use the F1-score to come up with the true balance.
+
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+```
+```{r}
+#| message: false
+#| warning: false
+
+# 1. Load data
+url <- "https://raw.githubusercontent.com/acatlin/data/refs/heads/master/penguin_predictions.csv"
+df <- read_csv(url)
+
+# 2. Calculate distribution
+dist <- df %>% 
+  count(sex) %>% 
+  mutate(proportion = n / sum(n))
+
+null_error_rate <- min(dist$proportion)
+
+# 3. Create the plot
+ggplot(df, aes(x = sex, fill = sex)) +
+  geom_bar(show.legend = FALSE) +
+  theme_minimal() +
+  scale_fill_manual(values = c("female" = "#f8766d", "male" = "#00bfc4")) +
+  labs(title = "Distribution of Actual Penguin Sex",
+       subtitle = paste("Null Error Rate:", round(null_error_rate, 4)),
+       x = "Actual Sex",
+       y = "Count")
+```
+The null error rate is important because it tells us the baseline accuracy of guessing the most common sex. A predictive model only makes sense if it can perform significantly better than guessing. In this case we are 94% right proving meaningful patterns within the data.
+# Function to calculate all metrics
+```{r}
+get_metrics <- function(thresh) {
+  df %>%
+    mutate(pred = ifelse(.pred_female > thresh, "female", "male")) %>%
+    summarise(
+      Threshold = thresh,
+      TP = sum(pred == "female" & sex == "female"),
+      FP = sum(pred == "female" & sex == "male"),
+      TN = sum(pred == "male" & sex == "male"),
+      FN = sum(pred == "male" & sex == "female")
+    ) %>%
+    mutate(
+      Accuracy = (TP + TN) / nrow(df),
+      Precision = TP / (TP + FP),
+      Recall = TP / (TP + FN),
+      F1 = 2 * (Precision * Recall) / (Precision + Recall)
+    )
+}
+
+results <- bind_rows(get_metrics(0.2), get_metrics(0.5), get_metrics(0.8))
+
+kable(results, digits = 3, caption = "Performance Metrics Across Thresholds")
+```
+## Real world use cases
+
+0.2 Threshold (High Recall) Case:Working on moving all females to a protected sanctuary. Why: I wanto to make sure to not leave any females behind (low FN). I would prefer to accidently grab males than to leave a female behind. 0.8 Threshold (High Precision) Case: I am administring a very expensive, female-only vitamin that is harmful to males. Why: Because the vitamin is harmful to males, I must be absolutely certain a penguin is a female before giving the vitamin. I would rather miss a few females (FN) than to accidentally give one to a male. (FP) Precision is most important here.
+
+| Metric | 0.2 Threshold | 0.5 Threshold | 0.8 Threshold |
+|:---|:---:|:---:|:---:|
+| **Accuracy** | 0.914 | 0.935 | **0.946 (Best)** |
+| **Precision** | 0.860 | 0.923 | **0.947 (Best)** |
+| **Recall** | **0.948 (Best)** | 0.923 | 0.923 |
+| **F1 Score** | 0.902 | 0.923 | 0.935 |
+
+## Conclusions
+The analysis shows that while the model overly performs the null error rate of 41.94%, which is its best depends on how it is applied. A threshold of 0.8 yielded the highest precision and accuracy making it ideal for avoiding FPs. But for a 0.2 threshold it maxmized the recall which is preferable when missing a positive that can result in a high cost. 
+ROC Curve  what could have been used if we were testing out more than three thresholds. This curve could help to test every threshold possible. The plots would find the spot that made the most sense. 
+
+## AI transcript 
+Phase,User Intent / Prompt,AI Response / Solution
+Problem Identification,"""I am so confused"" (regarding R code and metrics).","Provided a high-level ""Penguin Detective"" analogy to explain Null Error Rate, Thresholds, and the Confusion Matrix."
+Code Implementation,Shared existing broken code and assignment requirements.,"Debugged URL formatting, fixed ""hidden character"" errors, and implemented the get_metrics function to calculate Accuracy, Precision, Recall, and F1."
+Logic & Interpretation,"Asked for the meaning of ""Recall"" and ""F1.""","Explained the ""Safety Net"" concept of Recall and provided the real-world Sanctuary (0.2) vs. Vitamin (0.8) scenarios."
+Final Formatting,"""When I copy and paste the table it comes out with commas.""",Provided Markdown table syntax to ensure a professional grid layout in the rendered Quarto HTML.
